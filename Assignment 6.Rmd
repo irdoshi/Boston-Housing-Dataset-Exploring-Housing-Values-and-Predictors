@@ -1,51 +1,21 @@
 ---
-title: "Assignment 6"
+title: "Boston-Housing-Analysis"
 author: "Isha Doshi"
 date: "2022-11-20"
 output:
-  word_document: default
-  html_document: default
   pdf_document: default
+  html_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## 1 Housing Values in Boston
+**Housing Values in Boston**
 
-**1. Describe the data and variables that are part of the Boston dataset. Are there any missings? Any unreasonable values? Clean data as necessary.**
+**Checking for nulls**
 
-Answer:
-crim: per capita crime rate by neighborhood.
-
-zn: proportion of residential land zoned for lots over 25,000 sq.ft.
-
-indus: proportion of non-retail business acres per neighborhood.c
-
-chas: Charles River dummy variable (= 1 if tract bounds river; 0 otherwise).
-
-nox: nitrogen oxides concentration (parts per 10 million).
-
-rm: average number of rooms per dwelling.
-
-age: proportion of owner-occupied units built prior to 1940.
-
-dis: weighted mean of distances to five Boston employment centers.
-
-rad: index of accessibility to radial highways.
-
-tax: full-value property-tax rate per $10,000.
-
-ptratio: pupil-teacher ratio by neighborhood.
-
-black: 1000(Bk −0.63)2 where Bk is the proportion of blacks by neighborhood.
-
-lstat: lower status of the population (percent).
-
-medv: median value of owner-occupied homes in $1000s.
-
-There are no unreasonable values based on the summary. The are no null values as well. 
 ```{r}
 library(tidyverse)
 library(dplyr)
@@ -55,11 +25,8 @@ cat(any(is.na(data)),"- There are no NULL entries \n")
 summary(data)
 ```
 
-**2. Use the following predictors: rm, lstat, and add an additional predictors of your choice, something that you consider might be interesting to analyze. For each predictor do the following:**
 
-**(a) Make a scatterplot that displays how medv is related to that predictor and add regression line to that plot. Comment the result: do you see any relationship? Anything else interesting you see? **
-
-Answer: The relationship between median value of owner-occupied homes and average number of rooms per dwelling are directly proportional. There are higher avg of rooms per dwelling in higher values homes. The relationship between median value of owner-occupied homes and lower status of the population is inversely proportional. The cost of houses is lower in the areas where a larger lower status of the population live. The relationship between median values of owner-occupied homes and the age of the house is also inversely proportional. Older houses are less expensive.
+**The relationship between median value of owner-occupied homes and average number of rooms per dwelling are directly proportional. There are higher avg of rooms per dwelling in higher values homes. The relationship between median value of owner-occupied homes and lower status of the population is inversely proportional. The cost of houses is lower in the areas where a larger lower status of the population live. The relationship between median values of owner-occupied homes and the age of the house is also inversely proportional. Older houses are less expensive.**
 
 medv vs rm
 ```{r}
@@ -79,7 +46,7 @@ medv vs age
 ggplot(data,aes(x=age,y=medv))+geom_point()+geom_smooth(method="lm")
 ```
 
-**(b) Fit a simple linear regression model to predict the response. Show the regression output.**
+**Fitting a simple linear regression model to predict the response.**
 ```{r}
 model<-lm(medv~rm,data=data)
 summary(model)
@@ -94,33 +61,23 @@ model<-lm(medv~age,data=data)
 summary(model)
 ```
 
-**(c) Interpret the slope (the effect of your explanatory variable). Is it statistically significant?**
+**For linear regression, the more significant the slope is from zero, the more significant is the realtionship between dependent and independent variable. The slope for medv vs rm is 9, which is significantly higher than 0, hence it is statistically significant. The slope between medv vs lstat is -0.95, which is not that significant. The slope between medv vs age is -0.123, which is less significant.**
 
-Answer: For linear regression, the more significant the slope is from zero, the more significant is the realtionship between dependent and independent variable. The slope for medv vs rm is 9, which is significantly higher than 0, hence it is statistically significant. The slope between medv vs lstat is -0.95, which is not that significant. The slope between medv vs age is -0.123, which is less significant.
 
-**(d) Explain why do you think you see (or don’t see) the relationship on the figure/- model. Try to think about the possible social processes that make certain neighborhoods more or less expensive. For instance, why do you see that neighborhoods with more lower status people have lower house prices. Remember: RM is not the house size, it is the average house size in the neighborhood!**
+**I think the reason we see a relationship between the avg no of rooms and the cost is pretty obvious. The value of a home would increase with more number of rooms. I had expected that the crime rate would be inversely proportional to the median value of homes, since higher valued homes might have better security, but that wasn't the case. There is some relationship between the age of the houses and their costs. Older houses are less expensive than the new ones. This could be because older houses could be considered a liability for people to buy, since they might need renovations and have structural issues which might have to be resolved from time to time. This could be the reason that they are lower priced than the new homes.**
 
-Answer: I think the reason we see a relationship between the avg no of rooms and the cost is pretty obvious. The value of a home would increase with more number of rooms. I had expected that the crime rate would be inversely proportional to the median value of homes, since higher valued homes might have better security, but that wasn't the case. There is some relationship between the age of the houses and their costs. Older houses are less expensive than the new ones. This could be because older houses could be considered a liability for people to buy, since they might need renovations and have structural issues which might have to be reolved from time to time. This could be the reason that they are lower priced than the new homes.
 
-**3. Comment the results: are plots where you clearly can see a relationship related to models where the effect is statistically significant?**
+**The points are more densely packed near the line of regression where there is a higher statistical significance based on the model.**
 
-Answer: Yes, the points are more densely packed near the line of regression where there is a higher statistical significane based on the model.
-
-**4. If you do this correctly, you find t-value for rm to be 21.72. How is the t-value computed? What is it testing–what is H0 here? What would be the critical t-value here? **
-
-Answer: Yes, the t-value of rm is 21.72 in this model. This is calculated using this formula:
-t = (Estimate-null value/std.error). We can show that if H0 is correct, the t value is t-distributed. Here H0 : Estimate = 0. Critical t-value: the critical t value comes from the t-distribution table. Here the critical value tcr = -8.405.
+**The t-value of rm is 21.72 in this model. This is calculated using this formula:t = (Estimate-null value/std.error). We can show that if H0 is correct, the t value is t-distributed. Here H0 : Estimate = 0. Critical t-value: the critical t value comes from the t-distribution table. Here the critical value tcr = -8.405.**
 
 ```{r}
 model<-lm(medv~rm,data=data)
 summary(model)
 qt(p = 2.2e-16, df = 504)
 ```
-**5. Fit a multiple regression model to predict the response using all the predictors. Describe your results. For which predictors can we reject the null hypothesis H0 :βj =0? **
 
-Answer: When we use all predictors, we get adj r square as 0.733, which is a little higher than lstat and rm together. This means that although there might be one or two predictors which are significant stastistcally, rm and lstat are more significant than the others. We can use trial and error to improve the adj r square value. We find ptratio is also statistically significant by trial and error.
-
-We can reject the null hypothesis wherever p <0.05. The null hypothesis is rejected for crim, zn, indus, chas, nox, rm, age,rad, dis, ptratio, black, and lstat.
+**When we use all predictors, we get adj r square as 0.733, which is a little higher than lstat and rm together. This means that although there might be one or two predictors which are significant stastistcally, rm and lstat are more significant than the others. We can use trial and error to improve the adj r square value. We find ptratio is also statistically significant by trial and error. We can reject the null hypothesis wherever p <0.05. The null hypothesis is rejected for crim, zn, indus, chas, nox, rm, age,rad, dis, ptratio, black, and lstat.**
 
 ```{r}
 ##using all predictors
@@ -141,17 +98,14 @@ model<-lm(medv~lstat,data=data)
 summary(model)
 ```
 
-**6. Interpret the results for rm, lstat and indus. Are the results statistically significant? Here just statistical interpretation is enough.**
-
-Answer: The adjusted r square does not change significantly when indus is added, it is not statistically significant. 
+**The adjusted r square does not change significantly when indus is added, it is not statistically significant.** 
 
 ```{r}
 model<-lm(medv~rm+lstat+indus,data=data)
 summary(model)
 ```
-**7. How do your results from 2 compare to your results from 5? Compare the results for those predictors you used for simple regression above. Explain why do the values differ. Do they still tell the same basic story?**
 
-Answer: When we use multiple regression, the adjusted r square value increases, giving us a better relationship between the predictors and medv. The values differ based on how dependent medv is on the above predictors. The values also differ because a particular predictor could be directly or inversely proportional to medv. It does tell the same story, but multiple regression takes in the values of multiple predictors to answer the question more accurately.
+**When we use multiple regression, the adjusted r square value increases, giving us a better relationship between the predictors and medv. The values differ based on how dependent medv is on the above predictors. The values also differ because a particular predictor could be directly or inversely proportional to medv. It does tell the same story, but multiple regression takes in the values of multiple predictors to answer the question more accurately.**
 
 ```{r}
 model<-lm(medv~lstat,data=data)
@@ -164,7 +118,7 @@ model<-lm(medv~lstat+rm+ptratio,data=data)
 summary(model)
 ```
 
-## 2 Interpret Regression Results 
+**Interpreting Regression Results** 
 
 **1. Do neighborhoods with more evictions see more or less 311 calls? By how much?**
 
@@ -186,7 +140,7 @@ Answer: There is a negative correlation between the two. In areas where more whi
 
 Answer: Older median age is associated with more 311 calls, this is statistically significant at 1% standard error. Because the p-value in this case is less than 0.01 and has a 99% confidence interval, we can say that our model is statistically significant.
 
-**6. The value for housing density is -0.13. What does thin number mean?**
+**6. The value for housing density is -0.13. What does this number mean?**
 
 Answer: This means that the housing density is negatively correlated with number of 311 calls. Lesser calls come from homes that have more people staying in them. This value is cross sectional regression value after logging. However, the model is less statistically significant because the absolute p-value is greater than 0.05.
 
@@ -194,6 +148,3 @@ Answer: This means that the housing density is negatively correlated with number
 
 Answer: In Philadelphia, there is a negative correlation between the number of calls, compared to Austin. This means more people call 311 in Austin than in Philadelphia by 0.56 and a p-value of less than 0.1, indicating that the model is statistically significant with a 90% confidence interval. Since the absolute p-value is more than 0.05, the relationship is not statistically significant.
 
-**Finally tell us how many hours did you spend on this PS**
-
-I took about 4 hours to solve this.
